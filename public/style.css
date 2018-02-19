@@ -1,0 +1,157 @@
+:root {
+    --main-left-sidebar-color: #D75813;
+    --main-right-sidebar-color: #1C1F24;
+    --chat-table-color-one: #686766;
+    --chat-table-color-two: #B7B7B7;
+    --chat-table-color-background: #787776;
+    --chat-tab-color-base: var(--chat-table-color-one);
+    --chat-tab-color-highlight: var(--chat-table-color-two);
+    --input-box-background-color: aliceblue;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #F0F0F0;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #777777;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555555;
+}
+
+html, body {
+    background: var(--main-right-sidebar-color);
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.flexcontainer {
+    display: flex;
+}
+
+.flexrow {
+    flex-direction: row;
+}
+
+.flexcol {
+    flex-direction: column;
+}
+
+.flexwrap {
+    flex-wrap: wrap;
+}
+
+.flexnowrap {
+    flex-wrap: nowrap;
+}
+
+.flexjend {
+    justify-content: flex-end;
+}
+
+#content_container {
+    height: 100%;
+}
+
+#left_content {
+    max-width: 200px;
+    min-width: 200px;
+    flex-grow: 1;
+    background-color: var(--main-left-sidebar-color);
+}
+
+#middle_content {
+    flex-grow: 2;
+}
+
+#chat_tab_container {
+    flex-grow: 0;
+    background-color: var(--main-right-sidebar-color);
+    flex-shrink: 0;
+    margin-top: 5px;
+}
+
+.chat_tab {
+    flex-grow: 1;
+    text-align: center;
+    white-space: nowrap;
+    background-color: var(--chat-tab-color-base);
+    min-width: 5%;
+    max-width: 10%;
+    margin: 0;
+    padding-left: 5px;
+    padding-right: 5px;
+    border: 1px solid black;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.chat_tab:hover {
+    background-color: var(--chat-tab-color-highlight);
+    cursor: pointer;
+}
+
+#chat {
+    overflow: auto;
+    height: inherit;
+}
+
+#chat_wrapper {
+    flex-grow: 1;
+    border-top-right-radius: 6px;
+    border: 1px solid var(--main-right-sidebar-color);
+    background-color: var(--chat-table-color-background);
+    overflow: hidden;
+}
+
+#chat table {
+    width: 100%;
+    height: 100%;
+    border-spacing: 0;
+}
+
+#chat td {
+    padding: 5px;
+    white-space: pre-line;
+}
+
+#chat tr:nth-child(odd) {
+    background-color: var(--chat-table-color-one);
+}
+
+#chat tr:nth-child(even) {
+    background-color: var(--chat-table-color-two);
+}
+
+#input_div {
+    flex-grow: 0;
+}
+
+#right_content {
+    max-width: 200px;
+    min-width: 200px;
+    flex-grow: 1;
+    background-color: var(--main-right-sidebar-color);
+}
+
+.input_box {
+    margin: 5px;
+    margin-bottom: 15px;
+    padding: 3px;
+    flex-grow: 0;
+    border: 1px solid black;
+    border-radius: 5px;
+    min-height: 60px;
+    max-height: 100px;
+    background-color: var(--input-box-background-color);
+    outline: none;
+    overflow-y: auto;
+    line-height: 20px;
+}

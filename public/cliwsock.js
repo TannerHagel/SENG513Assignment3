@@ -1,5 +1,5 @@
 
-$(document).ready(function onLoad(){
+$(document).ready(function onLoadCliWSock(){
     var socket = io();
 
     socket
@@ -13,7 +13,7 @@ $(document).ready(function onLoad(){
     $("#input_div").keydown(function inputKeydown(event) {
         if(event.keyCode === 13 && !event.shiftKey) {
             if(event.target.innerHTML === "") return false;
-            socket.emit("msg send", event.target.innerText);
+            socket.emit("msg send", {nickname: getCookie("nickname"), msg: event.target.innerText});
             event.target.innerHTML = "";
             $("#chat").scrollTop($("#chat>table").outerHeight());
             return false;
@@ -28,7 +28,7 @@ function addMessage(msg) {
     //table.append("<tr><td>" + msg.replace(/\n/g, "<br>") + "</td></tr>");
     table.append($("<tr>")
             .append($("<td>")
-                .text(msg)
+                .text(msg.nickname + "\t" + msg.msg)
              )
           );
     if(scroll) {

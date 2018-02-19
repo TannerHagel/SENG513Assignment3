@@ -1,4 +1,3 @@
-
 $(document).ready(function onLoadCliWSock(){
     var socket = io();
 
@@ -22,16 +21,20 @@ $(document).ready(function onLoadCliWSock(){
 });
 
 function addMessage(msg) {
-    let table = $("#chat>table");
+    let list = $("#chat>ul");
     let chat = $("#chat");
     let scroll = (chat[0].scrollHeight - chat.scrollTop() - chat.outerHeight()) <= 0;
-    //table.append("<tr><td>" + msg.replace(/\n/g, "<br>") + "</td></tr>");
-    table.append($("<tr>")
-            .append($("<td>")
-                .text(msg.nickname + "\t" + msg.msg)
-             )
-          );
+    let date = new Date(msg.timestamp);
+    let timestring = date.getHours() % 12 + ":" +
+                     (date.getMinutes() < 10 ? '0' : '' ) + date.getMinutes() + " " +
+                     (date.getHours() > 12 ? "PM" : "AM");
+    list.append($("<li>")
+            .addClass("flexcontainer flexrow flexnowrap")
+            .append($("<p>").text(timestring))
+            .append($("<p>").text(msg.nickname))
+            .append($("<p>").text(msg.msg))
+         );
     if(scroll) {
-        chat.scrollTop(table.outerHeight());
+        chat.scrollTop(list.outerHeight());
     }
 }

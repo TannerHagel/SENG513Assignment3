@@ -45,7 +45,7 @@ app.use(function(err, req, res, next) {
 
 io.on('connection', function(socket) {
     socket.on('msg send', function(msg) {
-        console.log("Message sent: " + msg);
+        msg.timestamp = Date.now();
         io.emit('msg send', msg);
     });
 });

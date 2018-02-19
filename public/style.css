@@ -94,6 +94,7 @@ html, body {
     overflow: hidden;
 }
 
+/*
 #chat table {
     width: 100%;
     height: 100%;
@@ -110,6 +111,38 @@ html, body {
 }
 
 #chat tr:nth-child(even) {
+    background-color: var(--chat-table-color-two);
+}
+*/
+
+#chat ul {
+    width: 100%;
+    height: 100%;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+#chat li {
+    white-space: pre-line;
+    word-break: normal;
+    overflow-wrap: break-word;
+}
+
+#chat p {
+    padding: 5px;
+}
+
+#chat p:last-child {
+    word-break: break-word;
+}
+
+
+#chat li:nth-child(odd) {
+    background-color: var(--chat-table-color-one);
+}
+
+#chat li:nth-child(even) {
     background-color: var(--chat-table-color-two);
 }
 

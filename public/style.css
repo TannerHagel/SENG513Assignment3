@@ -57,6 +57,10 @@ html, body {
     justify-content: flex-end;
 }
 
+.flexjspacebetween {
+    justify-content: space-between;
+}
+
 #content_container {
     height: 100%;
 }
@@ -77,10 +81,13 @@ html, body {
     background-color: var(--main-right-sidebar-color);
     flex-shrink: 0;
     margin-top: 5px;
-    padding-left: 5px;
+    padding: 5px;
     color: var(--main-right-sidebar-text-color);
 }
 
+li.selfmsg p:not(:first-child) {
+    font-weight: bold;
+}
 #chat {
     overflow: auto;
     height: inherit;
@@ -131,6 +138,7 @@ html, body {
 
 #chat p {
     padding: 5px;
+    margin: 0;
 }
 
 #chat p:last-child {
@@ -155,10 +163,29 @@ html, body {
     min-width: 200px;
     flex-grow: 1;
     background-color: var(--main-right-sidebar-color);
+    color: var(--main-right-sidebar-text-color);
+}
+
+#right_content p {
+    text-align: center;
+}
+
+#right_content ol {
+    width: 80%;
+    list-style-type: none;
+    margin: auto;
+    padding: 0;
+}
+
+#right_content li {
+    white-space: pre-line;
+    word-break: normal;
+    overflow-wrap: break-word;
 }
 
 .input_box {
     margin: 5px;
+    margin-top: 15px;
     margin-bottom: 15px;
     padding: 3px;
     flex-grow: 0;

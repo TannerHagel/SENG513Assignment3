@@ -4,8 +4,9 @@
     <link href="/style.css" rel="stylesheet" />
     <script src="/socket.io/socket.io.js"></script>
     <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-    <script src="/cliwsock.js"></script>
+    <script src="/common.js"></script>
     <script src="/cliscript.js"></script>
+    <script src="/cliwsock.js"></script>
 </head>
 <body>
     <div id="content_container" class="flexcontainer flexrow flexnowrap">
@@ -14,22 +15,21 @@
         </div>
 
         <div id="middle_content" class="flexcontainer flexcol flexnowrap">
-            <div id="chat_top_container" class="flexcontainer flexrow flexwrap">
+            <div id="chat_top_container" class="flexcontainer flexrow flexwrap flexjspacebetween">
                 <div>
+                    <span>Nickname:</span>
                     <span id="nickname">NICKNAME!</span>
+                    <span id="change_nick">Change Nick</span>
                 </div>
                 <div>
-                    
+                    <span>Log In</span>
+                    <span>Sign Up</span>
                 </div>
             </div>
             <div id="chat_wrapper" class="flexcontainer flexcol flexjend">
                 <div id="chat" class="flexcontainer flexcol">
                     <!--<table style="align-self: flex-end"></table>-->
                     <ul>
-                        <li class="flexcontainer flexrow flexnowrap"><p>Timestamp</p>
-                            <p>Nickname</p>
-                            <p>MessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessage MessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessageMessage</p>
-                        </li>
                     </ul>
                 </div>
                 <div contenteditable="true" id="input_div" class="input_box"></div>
@@ -37,7 +37,13 @@
         </div>
 
         <div id="right_content">
-            <p> Users </p>
+            <p> Online Users </p>
+            <ol>
+                <li>One</li>
+                <li>One</li>
+                <li>One</li>
+                <li>One</li>
+            </ol>
         </div>
     </div>
 </body>

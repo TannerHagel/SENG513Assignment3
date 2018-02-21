@@ -5,6 +5,7 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const cookieParser = require('cookie-parser');
 const randName = require('./random_name.js');
+const userManager = require('./user_manager.js');
 
 var onlineUsers = {};
 
@@ -21,11 +22,8 @@ app.disable('x-powered-by'); // Do not tell the browsers of server information
 app.set('port', process.env.PORT || 80);
 
 app.get('/', function(req, res) {
-    if(!req.cookies.nickname) {
-        res.cookie("nickname", randName.genName());
-    }
-    if(!req.cookies.userid) {
-        res.cookie("userid", Math.floor(Math.random() * 4294967296 )); // Generate a "32" bit ID
+    if(req.cookies.userid && !userManager.getUser(req.cookies.userid)) {
+        res.clearCookie("userid");
     }
     res.sendFile(__dirname + '/public/index.html');
 });
@@ -46,32 +44,35 @@ app.use(function(req, res, next) {
 
 app.use(function(err, req, res, next) {
     console.error("Server Error: " + err);
+    console.error(err.stack);
     res.status(500);
     res.render('500');
 
 });
 
 io.on('connection', function(socket) {
-    let cookies = socket.handshake.headers.cookie.split(";"); // This needs fixing
-    let userVals = {connections: 1};
-
-    for(element of cookies) {
-        let e = element.trim();
-        if(e.startsWith("nickname")) {
-            userVals.nickname = e.split("=")[1];
-        } else if(e.startsWith("userid")) {
-            userVals.userid = e.split("=")[1];
-        }
+    let userid = (socket.handshake['query'] ? socket.handshake['query']['userid'] : undefined);
+    let userVals = userManager.getUser(userid);
+    if(!userVals) {
+        console.log("Cannot find user: " + userid);
+        userVals = userManager.genUser();
     }
-    
+
     socket.on('msg send', function(msg, ackFunction) {
         msg.timestamp = Date.now();
+        msg.nickcolor = userVals.nickcolor;
+        msg.nickname = userVals.nickname;
+        msg.userid = userVals.userid;
         socket.broadcast.emit('msg send', msg);
         ackFunction(msg);
         /*setTimeout(function() {
             let nmsg = { msgid:msg.msgid, msg:"Edited message!" };
             io.emit('msg edit', nmsg);
         }, 3000);/**/
+    });
+
+    socket.on('get self', function(ackFunction) {
+        ackFunction(getOutboundUser(userVals));
     });
 
     socket.on('get online', function(ackFunction) {
@@ -95,7 +96,8 @@ io.on('connection', function(socket) {
 
     if(onlineUsers[userVals.userid] === undefined) {
         onlineUsers[userVals.userid] = userVals;
-        io.emit('user join', userVals);
+        io.emit('user join', getOutboundUser(userVals));
+        userVals.connections = 1;
     } else {
         if(onlineUsers[userVals.userid].timeout) {
             clearTimeout(onlineUsers[userVals.userid].timeout);
@@ -104,14 +106,18 @@ io.on('connection', function(socket) {
         }
         delete onlineUsers[userVals.userid].timeout;
     }
-    console.log("\n",onlineUsers);
+    console.log("\n----------------------\n",onlineUsers,"\n----------------------");
 });
+
+function getOutboundUser(userVals) {
+    return {nickname:userVals.nickname, userid:userVals.userid, nickcolor:userVals.nickcolor};
+}
 
 function getOnline() {
     let ret = [];
     let pos = 0;
     for(user of Object.values(onlineUsers)) {
-        ret[pos++] = { nickname:user.nickname, userid:user.userid };
+        ret[pos++] = getOutboundUser(user);
     }
     return ret;
 }

@@ -1,11 +1,8 @@
 var chatUser;
 
 $(document).ready(function onLoadCliScript() {
-    let nick = getCookie('nickname');
     let userID = getCookie('userid');
-    $("#nickname").text(nick);
     chatUser = { 
-        nickname: nick,
         userid: userID,
         };
 });

@@ -1,9 +1,22 @@
 $(document).ready(function onLoadCliWSock(){
-    var socket = io();
+    var socket = io({query: "userid=" + chatUser.userid });
 
     socket
         .on('connect', function socketConnect() {
-            console.log("Connected to server!");
+            socket.emit('get self', function eGetSelf(user) {
+                $("#nickname").text(user.nickname);
+                chatUser.nickname = user.nickname;
+                if(chatUser.userid != user.userid) {
+                    console.log("Changed userID!");
+                    document.cookie = "userid=" + user.userid;
+                    chatUser.userid = user.userid;
+                }
+            });
+
+            socket.emit("get online", function(online) {
+                console.log("Online users: ", online);
+                setOnlineUsers(online);
+            });
         })
         .on('msg send', function eMsgSend(msg) {
             addMessage(msg);
@@ -21,15 +34,13 @@ $(document).ready(function onLoadCliWSock(){
             removeOnlineUser(user);
         });
 
-    socket.emit("get online", function(online) {
-        console.log("Online users: ", online);
-        setOnlineUsers(online);
-    });
+
+
 
     $("#input_div").keydown(function inputKeydown(event) {
         if(event.keyCode === 13 && !event.shiftKey) {
             if(event.target.innerHTML === "") return false;
-            socket.emit("msg send", {nickname: getCookie("nickname"), userid: chatUser.userid, msg: event.target.innerText, msgid: generateMsgId(chatUser.userid) }, function(response) {
+            socket.emit("msg send", {msg: event.target.innerText, msgid: generateMsgId(chatUser.userid) }, function(response) {
                 addMessage(response);
             });
             event.target.innerHTML = "";
@@ -49,9 +60,9 @@ function addMessage(msg) {
                      (date.getHours() > 12 ? "PM" : "AM");
     list.append($("<li>")
             .attr("msgid", msg.msgid)
-            .addClass("flexcontainer flexrow flexnowrap" + (msg.userid === chatUser.userid ? " selfmsg" : ""))
+            .addClass("flexcontainer flexrow flexnowrap" + (msg.userid == chatUser.userid ? " selfmsg" : ""))
             .append($("<p>").text(timestring))
-            .append($("<p>").text(msg.nickname))
+            .append($("<p>").text(msg.nickname).css('color', msg.nickcolor))
             .append($("<p>").text(msg.msg))
          );
     if(scroll) {
@@ -78,11 +89,11 @@ function addOnlineUser(user) {
                .attr("userid", user.userid)
                .text(user.nickname)
            );
-
     let added = false;
     list.children().each(function() {
         if($(this).text() > $(element).text()) {
             $(this).before($(element));
+            $("li[userid='" + user.userid + "']").css("color", user.nickcolor);
             added = true;
             return false;
         }
@@ -90,6 +101,7 @@ function addOnlineUser(user) {
 
     if(!added) {
         list.append($(element));
+        $("li[userid='" + user.userid + "']").css("color", user.nickcolor);
     }
 }
 

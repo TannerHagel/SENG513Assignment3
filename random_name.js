@@ -2,7 +2,7 @@ module.exports={
 
     genName:function generateRandomName() {
         let name = "";
-        name += capitalize(Adjectives[randInt(Adjectives.length)]);
+        name += capitalize(Adjectives[randInt(Adjectives.length)]) + " ";
         name += capitalize(Animals[randInt(Animals.length)]);
 
         return name;

@@ -4,8 +4,13 @@ $(document).ready(function onLoadCliWSock(){
     socket
         .on('connect', function socketConnect() {
             socket.emit('get self', function eGetSelf(user) {
-                $("#nickname").text(user.nickname);
-                chatUser.nickname = user.nickname;
+                $("#nickname").text(user.nickname).css('color', user.nickcolor);
+                chatUser.nickcolor = user.nickcolor;
+                if(chatUser.nickname != user.nickname) {
+                    if(chatUser.nickname) {
+                    }
+                    chatUser.nickname = user.nickname;
+                }
                 if(chatUser.userid != user.userid) {
                     console.log("Changed userID!");
                     document.cookie = "userid=" + user.userid;
@@ -13,9 +18,20 @@ $(document).ready(function onLoadCliWSock(){
                 }
             });
 
+            socket.emit("join room", "lobby");
+
             socket.emit("get online", function(online) {
                 console.log("Online users: ", online);
                 setOnlineUsers(online);
+            });
+
+            socket.emit("get history", "lobby", function(history) {
+                if(history) {
+                    for(let msg of history) {
+                        addMessage(msg);
+                    }
+                }
+                
             });
         })
         .on('msg send', function eMsgSend(msg) {
@@ -51,22 +67,21 @@ $(document).ready(function onLoadCliWSock(){
 });
 
 function addMessage(msg) {
-    let list = $("#chat>ul");
-    let chat = $("#chat");
-    let scroll = (chat[0].scrollHeight - chat.scrollTop() - chat.outerHeight()) <= 0;
+    let chat = document.getElementById("chat");
+    let scroll = (msg.userid == chatUser.userid) || (chat.scrollHeight - chat.scrollTop === chat.clientHeight);
     let date = new Date(msg.timestamp);
     let timestring = date.getHours() % 12 + ":" +
                      (date.getMinutes() < 10 ? '0' : '' ) + date.getMinutes() + " " +
                      (date.getHours() > 12 ? "PM" : "AM");
-    list.append($("<li>")
+    $("#chat>ul").append($("<li>")
             .attr("msgid", msg.msgid)
-            .addClass("flexcontainer flexrow flexnowrap" + (msg.userid == chatUser.userid ? " selfmsg" : ""))
+            .addClass("flexcontainer flexrow flexwrap" + (msg.userid == chatUser.userid ? " selfmsg" : ""))
             .append($("<p>").text(timestring))
             .append($("<p>").text(msg.nickname).css('color', msg.nickcolor))
             .append($("<p>").text(msg.msg))
          );
     if(scroll) {
-        chat.scrollTop(list.outerHeight());
+        $("#chat").scrollTop(chat.scrollHeight);
     }
 }
 

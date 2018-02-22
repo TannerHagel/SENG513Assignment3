@@ -4,8 +4,8 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const cookieParser = require('cookie-parser');
-const randName = require('./random_name.js');
 const userManager = require('./user_manager.js');
+const roomManager = require('./room_manager.js');
 
 var onlineUsers = {};
 
@@ -50,6 +50,8 @@ app.use(function(err, req, res, next) {
 
 });
 
+roomManager['lobby'] = roomManager.newMgr();
+
 io.on('connection', function(socket) {
     let userid = (socket.handshake['query'] ? socket.handshake['query']['userid'] : undefined);
     let userVals = userManager.getUser(userid);
@@ -58,17 +60,26 @@ io.on('connection', function(socket) {
         userVals = userManager.genUser();
     }
 
+    socket.on('join room', function(room) {
+        socket.join(room);
+    });
+
     socket.on('msg send', function(msg, ackFunction) {
         msg.timestamp = Date.now();
         msg.nickcolor = userVals.nickcolor;
         msg.nickname = userVals.nickname;
         msg.userid = userVals.userid;
-        socket.broadcast.emit('msg send', msg);
+        roomManager['lobby'].addMsg(msg);
+        socket.broadcast.to('lobby').emit('msg send', msg);
         ackFunction(msg);
         /*setTimeout(function() {
             let nmsg = { msgid:msg.msgid, msg:"Edited message!" };
             io.emit('msg edit', nmsg);
         }, 3000);/**/
+    });
+
+    socket.on('get history', function(room, ackFunction) {
+        ackFunction(roomManager[room].getMessages());
     });
 
     socket.on('get self', function(ackFunction) {
@@ -106,8 +117,8 @@ io.on('connection', function(socket) {
         }
         delete onlineUsers[userVals.userid].timeout;
     }
-    console.log("\n----------------------\n",onlineUsers,"\n----------------------");
 });
+
 
 function getOutboundUser(userVals) {
     return {nickname:userVals.nickname, userid:userVals.userid, nickcolor:userVals.nickcolor};

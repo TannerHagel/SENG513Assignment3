@@ -1,13 +1,16 @@
 :root {
     --main-left-sidebar-color: #D75813;
     --main-right-sidebar-color: #1C1F24;
-    --chat-table-color-one: #686766;
-    --chat-table-color-two: #B7B7B7;
-    --chat-table-color-background: #787776;
-    --chat-tab-color-base: var(--chat-table-color-one);
-    --chat-tab-color-highlight: var(--chat-table-color-two);
-    --input-box-background-color: aliceblue;
+    --chat-table-color-background: #474747;
+    --chat-table-color-one: var(--chat-table-color-background)/*#686766*/;
+    --chat-table-color-two: var(--chat-table-color-background)/*#B7B7B7*/;
+    --chat-table-line-color: var(--main-right-sidebar-color);
+    /*--chat-tab-color-base: var(--chat-table-color-one);
+    --chat-tab-color-highlight: var(--chat-table-color-two);*/
+    --input-box-background-color: darkgrey;
     --main-right-sidebar-text-color: white;
+    --timestamp-inactive-color: var(--main-right-sidebar-color);
+    --timestamp-active-color: darkgrey;
 }
 
 ::-webkit-scrollbar {
@@ -85,9 +88,6 @@ html, body {
     color: var(--main-right-sidebar-text-color);
 }
 
-li.selfmsg p:not(:first-child) {
-    font-weight: bold;
-}
 #chat {
     overflow: auto;
     height: inherit;
@@ -123,10 +123,12 @@ li.selfmsg p:not(:first-child) {
 */
 
 #chat ul {
-    width: 100%;
+    width: 95%;
     height: 100%;
     list-style-type: none;
-    margin: 0;
+    margin: 10px;
+    margin-left: auto;
+    margin-right: auto;
     padding: 0;
 }
 
@@ -136,13 +138,40 @@ li.selfmsg p:not(:first-child) {
     overflow-wrap: break-word;
 }
 
+#chat li:hover p:first-child {
+    color: var(--timestamp-active-color);
+}
+
+#chat li:after {
+    content: "";
+    display: block;
+    height: 1px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    width: 90%;
+    background-color: var(--chat-table-line-color);
+}
+
 #chat p {
     padding: 5px;
     margin: 0;
 }
 
+#chat p:first-child {
+    color: var(--timestamp-inactive-color);
+    font-size: 11px;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
 #chat p:last-child {
     word-break: break-word;
+}
+
+li p:nth-child(2), li.selfmsg p:last-child {
+    font-weight: bold;
 }
 
 

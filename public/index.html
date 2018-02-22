@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Clack</title>
+
+    <!-- Icon Stuff -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#ff6100">
+    <meta name="theme-color" content="#ff6100">
+
     <link href="/style.css" rel="stylesheet" />
     <script src="/socket.io/socket.io.js"></script>
     <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -19,7 +30,6 @@
                 <div>
                     <span>Nickname:</span>
                     <span id="nickname">NICKNAME!</span>
-                    <span id="change_nick">Change Nick</span>
                 </div>
                 <div>
                     <span>Log In</span>
@@ -28,7 +38,6 @@
             </div>
             <div id="chat_wrapper" class="flexcontainer flexcol flexjend">
                 <div id="chat" class="flexcontainer flexcol">
-                    <!--<table style="align-self: flex-end"></table>-->
                     <ul>
                     </ul>
                 </div>
@@ -39,10 +48,6 @@
         <div id="right_content">
             <p> Online Users </p>
             <ol>
-                <li>One</li>
-                <li>One</li>
-                <li>One</li>
-                <li>One</li>
             </ol>
         </div>
     </div>

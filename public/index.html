@@ -12,7 +12,13 @@
     <meta name="msapplication-TileColor" content="#ff6100">
     <meta name="theme-color" content="#ff6100">
 
-    <link href="/style.css" rel="stylesheet" />
+    <!-- Mobile Stuff -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <link rel="stylesheet" type="text/css" media="only screen and (min-width: 751px)" href="/style.css" />
+    <link rel="stylesheet" type="text/css" media="only screen and (max-width: 750px)" href="/mobile_style.css" />
     <script src="/socket.io/socket.io.js"></script>
     <script src="http://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="/common.js"></script>
@@ -20,9 +26,16 @@
     <script src="/cliwsock.js"></script>
 </head>
 <body>
+    <div id="splashscreen">
+        <div>
+            <img src="/icon-256.png"/>
+            <p> Loading... </p>
+        </div>
+    </div>
     <div id="content_container" class="flexcontainer flexrow flexnowrap">
         <div id="left_content">
             <p> Sidebar </p>
+            <img src="https://openclipart.org/download/202776/pawn.svg" style="height: 1rem; margin-top: auto; margin-bottom: auto; margin-right: 1rem;" class="mobile"/>
         </div>
 
         <div id="middle_content" class="flexcontainer flexcol flexnowrap">
@@ -31,7 +44,7 @@
                     <span>Nickname:</span>
                     <span id="nickname">NICKNAME!</span>
                 </div>
-                <div>
+                <div class="login_signup">
                     <span>Log In</span>
                     <span>Sign Up</span>
                 </div>
@@ -41,7 +54,11 @@
                     <ul>
                     </ul>
                 </div>
-                <div contenteditable="true" id="input_div" class="input_box"></div>
+            </div>
+            <div id="input_wrapper_bg">
+                <div id="input_wrapper">
+                    <textarea id="input_area" class="input_box"></textarea>
+                </div>
             </div>
         </div>
 

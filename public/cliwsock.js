@@ -3,6 +3,19 @@ $(document).ready(function onLoadCliWSock(){
 
     socket
         .on('connect', function socketConnect() {
+            let ready = {
+                get_self: false,
+                get_online: false,
+                get_history: false,
+                min_time: false,
+                check: function() {
+                    for(let val in this) {
+                        if(this[val] === false) return;
+                    }
+                    $("#splashscreen").fadeOut(200);
+                }
+            };
+            setTimeout(function() { ready.min_time = true; ready.check();}, 900);
             socket.emit('get self', function eGetSelf(user) {
                 $("#nickname").text(user.nickname).css('color', user.nickcolor);
                 chatUser.nickcolor = user.nickcolor;
@@ -16,13 +29,16 @@ $(document).ready(function onLoadCliWSock(){
                     document.cookie = "userid=" + user.userid;
                     chatUser.userid = user.userid;
                 }
+                ready.get_self = true;
+                ready.check();
             });
 
             socket.emit("join room", "lobby");
 
             socket.emit("get online", function(online) {
-                console.log("Online users: ", online);
                 setOnlineUsers(online);
+                ready.get_online = true;
+                ready.check();
             });
 
             socket.emit("get history", "lobby", function(history) {
@@ -32,7 +48,10 @@ $(document).ready(function onLoadCliWSock(){
                     }
                 }
                 
+                ready.get_history = true;
+                ready.check();
             });
+
         })
         .on('msg send', function eMsgSend(msg) {
             addMessage(msg);
@@ -53,18 +72,30 @@ $(document).ready(function onLoadCliWSock(){
 
 
 
-    $("#input_div").keydown(function inputKeydown(event) {
-        if(event.keyCode === 13 && !event.shiftKey) {
-            if(event.target.innerHTML === "") return false;
-            socket.emit("msg send", {msg: event.target.innerText, msgid: generateMsgId(chatUser.userid) }, function(response) {
-                addMessage(response);
-            });
-            event.target.innerHTML = "";
-            $("#chat").scrollTop($("#chat>ul").outerHeight());
-            return false;
-        }
+    $("#input_area")
+        .keydown(function inputKeydown(event) {
+            if(event.keyCode === 13) {
+                if(!event.shiftKey) {
+                    if($(this).val() === "") return false;
+                    socket.emit("msg send", {msg: $(this).val(), msgid: generateMsgId(chatUser.userid) }, function(response) {
+                        addMessage(response);
+                    });
+                    $(this).val("");
+                    setInputHeight($(this));
+                    $("#chat").scrollTop($("#chat>ul").outerHeight());
+                    return false;
+                }
+            }
+    })
+        .bind("input propertychange", function() {
+            setInputHeight($(this));
     });
+
 });
+
+function setInputHeight(element) {
+    element.height((element.val().split("\n").length) * (parseFloat(element.css("line-height").replace("px", ""))));
+}
 
 function addMessage(msg) {
     let chat = document.getElementById("chat");

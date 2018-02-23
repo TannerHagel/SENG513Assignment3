@@ -66,18 +66,21 @@
     justify-content: space-between;
 }
 
-.mobile {
+#content_container {
+    height: 100%;
+    flex-direction: column;
+}
+
+#content_container .login_signup {
     display: none;
 }
 
-#content_container {
-    height: 100%;
-}
-
 #left_content {
-    max-width: 200px;
-    min-width: 200px;
-    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    flex-grow: 0;
     background-color: var(--main-left-sidebar-color);
 }
 
@@ -86,12 +89,15 @@
 }
 
 #chat_top_container {
+    width: fit-content;
+    position: absolute;
+    border-bottom-right-radius: 5px;
     flex-grow: 0;
     background-color: var(--main-right-sidebar-color);
     flex-shrink: 0;
-    margin-top: 5px;
     padding: 5px;
     color: var(--main-right-sidebar-text-color);
+    opacity: 0.6;
 }
 
 #chat {
@@ -102,11 +108,8 @@
 
 #chat_wrapper {
     flex-grow: 1;
-    border-top-right-radius: 6px;
-    border: 1px solid var(--main-right-sidebar-color);
-    border-bottom: 0;
+    border-top: 1px solid var(--main-right-sidebar-color);
     background-color: var(--chat-table-color-background);
-    overflow: hidden;
 }
 
 #chat ul {
@@ -117,6 +120,7 @@
     margin-left: auto;
     margin-right: auto;
     padding: 0;
+    padding-top: 20px;
 }
 
 #chat li {
@@ -154,6 +158,7 @@
 }
 
 #chat p:last-child {
+    width: 100%;
     word-break: break-word;
 }
 
@@ -173,7 +178,9 @@ li p:nth-child(2), li.selfmsg p:last-child {
 #right_content {
     max-width: 200px;
     min-width: 200px;
-    flex-grow: 1;
+    position: fixed;
+    height: 100%;
+    right: -100%;
     background-color: var(--main-right-sidebar-color);
     color: var(--main-right-sidebar-text-color);
 }
@@ -197,8 +204,6 @@ li p:nth-child(2), li.selfmsg p:last-child {
 
 #input_wrapper_bg {
     background-color: var(--chat-table-color-background);
-    border: 1px solid var(--main-right-sidebar-color);
-    border-top: 0;
 }
 
 #input_wrapper {
@@ -236,10 +241,11 @@ li p:nth-child(2), li.selfmsg p:last-child {
 #splashscreen {
     position: absolute;
     width: 100%;
+    z-index: 10;
 }
 
 #splashscreen div {
-    position: fixed;
+    position: absolute;
     text-align: center;
     top: 30%;
     left: 25%;

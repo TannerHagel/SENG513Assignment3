@@ -86,6 +86,7 @@
 
 #middle_content {
     flex-grow: 2;
+    overflow: auto;
 }
 
 #chat_top_container {
@@ -100,6 +101,10 @@
     opacity: 0.6;
 }
 
+#nickname {
+    font-weight: bold;
+}
+
 #chat {
     overflow: auto;
     height: inherit;
@@ -110,6 +115,7 @@
     flex-grow: 1;
     border-top: 1px solid var(--main-right-sidebar-color);
     background-color: var(--chat-table-color-background);
+    overflow: hidden;
 }
 
 #chat ul {

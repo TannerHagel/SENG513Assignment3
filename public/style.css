@@ -74,11 +74,18 @@
     height: 100%;
 }
 
-#left_content {
+#left_wrapper {
     max-width: 200px;
     min-width: 200px;
     flex-grow: 1;
+    margin: 0;
+    padding: 0;
+}
+
+#left_content {
     background-color: var(--main-left-sidebar-color);
+    height: 100%;
+    overflow: auto;
 }
 
 #middle_content {

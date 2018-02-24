@@ -66,9 +66,10 @@ io.on('connection', function(socket) {
 
     socket.on('msg send', function(msg, ackFunction) {
         if(msg.msg.startsWith("/")) {
-            parseCommand(msg.msg, userVals, socket);
-            ackFunction();
-            return;
+            if(parseCommand(msg.msg, userVals, socket)) {
+                ackFunction();
+                return;
+            }
         }
         msg.timestamp = Date.now();
         msg.nickcolor = userVals.nickcolor;
@@ -138,6 +139,7 @@ function parseCommand(msg, user, socket) {
             let outUser = getOutboundUser(user);
             socket.emit("self update", outUser);
             io.emit("user update", outUser);
+            return true;
             break;
 
         case "c":
@@ -150,10 +152,13 @@ function parseCommand(msg, user, socket) {
                 let outUser = getOutboundUser(user);
                 socket.emit("self update", outUser);
                 io.emit("user update", outUser);
+                return true;
                 break;
             }
 
     }
+
+    return false;
 
 }
 

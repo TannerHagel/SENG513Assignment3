@@ -251,6 +251,7 @@ li p:nth-child(2), li.selfmsg p:last-child {
 }
 
 #splashscreen div {
+    display: table;
     position: absolute;
     text-align: center;
     top: 30%;

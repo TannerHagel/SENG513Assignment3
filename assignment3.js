@@ -65,6 +65,11 @@ io.on('connection', function(socket) {
     });
 
     socket.on('msg send', function(msg, ackFunction) {
+        if(msg.msg.startsWith("/")) {
+            parseCommand(msg.msg, userVals, socket);
+            ackFunction();
+            return;
+        }
         msg.timestamp = Date.now();
         msg.nickcolor = userVals.nickcolor;
         msg.nickname = userVals.nickname;
@@ -118,6 +123,39 @@ io.on('connection', function(socket) {
         delete onlineUsers[userVals.userid].timeout;
     }
 });
+
+function parseCommand(msg, user, socket) {
+    let arr = msg.split(" ");
+
+    let cmd = (arr[0].charAt(0) === "/" ? arr[0].substring(1) : arr[0]);
+    let args = arr.slice(1);
+
+    switch(cmd.toLowerCase()) {
+        case "n":
+        case "nick":
+        case "nickname":
+            user.nickname = args.join(" ");
+            let outUser = getOutboundUser(user);
+            socket.emit("self update", outUser);
+            io.emit("user update", outUser);
+            break;
+
+        case "c":
+        case "nc":
+        case "color":
+        case "nickcolor":
+            let color = (args[0].charAt(0) === "#" ? args[0].substring(1) : args[0]);
+            if(color.match(/^[a-f0-9]{3}$|^[a-f0-9]{6}$/) != null) {
+                user.nickcolor = "#" + color;
+                let outUser = getOutboundUser(user);
+                socket.emit("self update", outUser);
+                io.emit("user update", outUser);
+                break;
+            }
+
+    }
+
+}
 
 
 function getOutboundUser(userVals) {

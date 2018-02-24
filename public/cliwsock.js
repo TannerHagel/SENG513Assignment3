@@ -17,18 +17,7 @@ $(document).ready(function onLoadCliWSock(){
             };
             setTimeout(function() { ready.min_time = true; ready.check();}, 900);
             socket.emit('get self', function eGetSelf(user) {
-                $("#nickname").text(user.nickname).css('color', user.nickcolor);
-                chatUser.nickcolor = user.nickcolor;
-                if(chatUser.nickname != user.nickname) {
-                    if(chatUser.nickname) {
-                    }
-                    chatUser.nickname = user.nickname;
-                }
-                if(chatUser.userid != user.userid) {
-                    console.log("Changed userID!");
-                    document.cookie = "userid=" + user.userid;
-                    chatUser.userid = user.userid;
-                }
+                updateSelf(user);
                 ready.get_self = true;
                 ready.check();
             });
@@ -57,16 +46,25 @@ $(document).ready(function onLoadCliWSock(){
             addMessage(msg);
         })
         .on('msg edit', function eMsgEdit(msg) {
-            console.log("Editing message:",msg);
             editMessage(msg);
         })
         .on('user join', function eUserJoin(user) {
-            console.log("User joined: " + user.nickname);
             addOnlineUser(user);
         })
         .on('user leave', function eUserLeave(user) {
-            console.log("User left: " + user.nickname);
             removeOnlineUser(user);
+        })
+        .on('user update', function eUserUpdate(user) {
+            updateUser(user);
+        })
+        .on('self update', function eSelfUpdate(user) {
+            updateSelf(user);
+        })
+        .on('notice', function eNotice(notice) {
+
+        })
+        .on('alert', function eAlert(alert) {
+
         });
 
 
@@ -78,7 +76,9 @@ $(document).ready(function onLoadCliWSock(){
                 if(!event.shiftKey) {
                     if($(this).val() === "") return false;
                     socket.emit("msg send", {msg: $(this).val(), msgid: generateMsgId(chatUser.userid) }, function(response) {
-                        addMessage(response);
+                        if(response) {
+                            addMessage(response);
+                        }
                     });
                     $(this).val("");
                     setInputHeight($(this));
@@ -92,6 +92,25 @@ $(document).ready(function onLoadCliWSock(){
     });
 
 });
+
+
+function updateSelf(user) {
+    $("#nickname").text(user.nickname).css('color', user.nickcolor);
+    chatUser.nickcolor = user.nickcolor;
+    if(chatUser.nickname != user.nickname) {
+        chatUser.nickname = user.nickname;
+    }
+    if(chatUser.userid != user.userid) {
+        console.log("Changed userID!");
+        document.cookie = "userid=" + user.userid;
+        chatUser.userid = user.userid;
+    }
+}
+
+function updateUser(user) {
+    removeOnlineUser(user);
+    addOnlineUser(user);
+}
 
 function setInputHeight(element) {
     element.height((element.val().split("\n").length) * (parseFloat(element.css("line-height").replace("px", ""))));
@@ -137,7 +156,7 @@ function addOnlineUser(user) {
            );
     let added = false;
     list.children().each(function() {
-        if($(this).text() > $(element).text()) {
+        if($(this).text().toLowerCase() > $(element).text().toLowerCase()) {
             $(this).before($(element));
             $("li[userid='" + user.userid + "']").css("color", user.nickcolor);
             added = true;

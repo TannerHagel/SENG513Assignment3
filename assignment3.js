@@ -135,10 +135,14 @@ function parseCommand(msg, user, socket) {
         case "n":
         case "nick":
         case "nickname":
-            user.nickname = args.join(" ");
-            let outUser = getOutboundUser(user);
-            socket.emit("self update", outUser);
-            io.emit("user update", outUser);
+            let nickname = args.join(" ").trim();
+            if(userManager.changeName(user, nickname)) {
+                let outUser = getOutboundUser(user);
+                socket.emit("self update", outUser);
+                io.emit("user update", outUser);
+            } else {
+                socket.emit("alert", "Failed to change nickname!");
+            }
             return true;
             break;
 

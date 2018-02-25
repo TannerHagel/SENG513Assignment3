@@ -60,11 +60,11 @@ $(document).ready(function onLoadCliWSock(){
         .on('self update', function eSelfUpdate(user) {
             updateSelf(user);
         })
-        .on('notice', function eNotice(notice) {
-
+        .on('notice', function eNotice(msg) {
+            alert(msg);
         })
-        .on('alert', function eAlert(alert) {
-
+        .on('alert', function eAlert(msg) {
+            alert(msg)
         });
 
 

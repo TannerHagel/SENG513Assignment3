@@ -11,7 +11,7 @@ function user_manager() {
         } else {
             return false;
         }
-    }
+    };
 
     ret.genUser = function usrMgrGenUser() {
         let user = genUser();
@@ -21,7 +21,23 @@ function user_manager() {
         database[user.userid] = user;
         console.log("Added user to database! " + user.nickname );
         return user;
-    }
+    };
+
+    ret.changeName = function userMgrChangeName(user, newNick) {
+        let change = true;
+        Object.keys(database).forEach(function(key, index) {
+            let u = database[key];
+            if(u.userid != user.userid && u.nickname.toLowerCase() == newNick.toLowerCase()) {
+                change = false;
+            }
+        });
+        if(change) {
+            user.nickname = newNick;
+            return true;
+        } else {
+            return false;
+        }
+    };
 
 
     return ret;

@@ -19,7 +19,7 @@ app.use(cookieParser());
 app.disable('x-powered-by'); // Do not tell the browsers of server information
 
 // Use port 80
-app.set('port', process.env.PORT || 80);
+app.set('port', process.env.PORT || 8080);
 
 app.get('/', function(req, res) {
     if(req.cookies.userid && !userManager.getUser(req.cookies.userid)) {

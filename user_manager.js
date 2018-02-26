@@ -24,6 +24,9 @@ function user_manager() {
     };
 
     ret.changeName = function userMgrChangeName(user, newNick) {
+	if(newNick.length < 1) {
+	    return false;
+	}
         let change = true;
         Object.keys(database).forEach(function(key, index) {
             let u = database[key];

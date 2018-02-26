@@ -127,7 +127,7 @@ function addMessage(msg) {
             .append($("<p>").text(msg.msg))
          );
     if(scroll) {
-        $("#chat").scrollTop($("#chat").scrollHeight);
+        $("#chat").scrollTop(chat.scrollHeight);
     }
 }
 
@@ -138,7 +138,8 @@ function addNotice(from, color, msg) {
             .append($("<p>").text(from).css('color', color))
             .append($("<p>").text(msg))
          );
-    $("#chat").scrollTop($("#chat").scrollHeight);
+    let chat = document.getElementById("chat");
+    $("#chat").scrollTop(chat.scrollHeight);
 }
 
 function formatTime(timestamp) {

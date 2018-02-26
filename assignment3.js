@@ -144,22 +144,23 @@ function parseCommand(msg, user, socket) {
                 socket.emit("alert", "Failed to change nickname!");
             }
             return true;
-            break;
 
         case "c":
         case "nc":
         case "color":
         case "nickcolor":
-            let color = (args[0].charAt(0) === "#" ? args[0].substring(1) : args[0]);
-            if(color.match(/^[a-fA-F0-9]{3}$|^[a-fA-F0-9]{6}$/) != null) {
-                user.nickcolor = "#" + color;
-                let outUser = getOutboundUser(user);
-                socket.emit("self update", outUser);
-                io.emit("user update", outUser);
-                return true;
-                break;
+            if(args.length > 0) {
+                let color = (args[0].charAt(0) === "#" ? args[0].substring(1) : args[0]);
+                if(color.match(/^[a-fA-F0-9]{3}$|^[a-fA-F0-9]{6}$/) != null) {
+                    user.nickcolor = "#" + color;
+                    let outUser = getOutboundUser(user);
+                    socket.emit("self update", outUser);
+                    io.emit("user update", outUser);
+                } else {
+                    socket.emit("alert", "Invalid color code!");    
+                }
             }
-
+            return true;
     }
 
     return false;

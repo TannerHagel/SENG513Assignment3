@@ -151,7 +151,7 @@ function parseCommand(msg, user, socket) {
         case "color":
         case "nickcolor":
             let color = (args[0].charAt(0) === "#" ? args[0].substring(1) : args[0]);
-            if(color.match(/^[a-f0-9]{3}$|^[a-f0-9]{6}$/) != null) {
+            if(color.match(/^[a-fA-F0-9]{3}$|^[a-fA-F0-9]{6}$/) != null) {
                 user.nickcolor = "#" + color;
                 let outUser = getOutboundUser(user);
                 socket.emit("self update", outUser);

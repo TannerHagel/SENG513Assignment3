@@ -61,10 +61,10 @@ $(document).ready(function onLoadCliWSock(){
             updateSelf(user);
         })
         .on('notice', function eNotice(msg) {
-            alert(msg);
+            addNotice("Notice:", "#FFEE00", msg); 
         })
         .on('alert', function eAlert(msg) {
-            alert(msg)
+            addNotice("System Alert:", "#FF0000", msg); 
         });
 
 
@@ -119,20 +119,32 @@ function setInputHeight(element) {
 function addMessage(msg) {
     let chat = document.getElementById("chat");
     let scroll = (msg.userid == chatUser.userid) || (chat.scrollHeight - chat.scrollTop === chat.clientHeight);
-    let date = new Date(msg.timestamp);
-    let timestring = date.getHours() % 12 + ":" +
-                     (date.getMinutes() < 10 ? '0' : '' ) + date.getMinutes() + " " +
-                     (date.getHours() > 12 ? "PM" : "AM");
     $("#chat>ul").append($("<li>")
             .attr("msgid", msg.msgid)
             .addClass("flexcontainer flexrow flexwrap" + (msg.userid == chatUser.userid ? " selfmsg" : ""))
-            .append($("<p>").text(timestring))
+            .append($("<p>").text(formatTime(msg.timestamp)))
             .append($("<p>").text(msg.nickname).css('color', msg.nickcolor))
             .append($("<p>").text(msg.msg))
          );
     if(scroll) {
         $("#chat").scrollTop(chat.scrollHeight);
     }
+}
+
+function addNotice(from, color, msg) {
+    $("#chat>ul").append($("<li>")
+            .addClass("flexcontainer flexrow flexwrap")
+            .append($("<p>").text(formatTime(Date.now())))
+            .append($("<p>").text(from).css('color', color))
+            .append($("<p>").text(msg))
+         );
+}
+
+function formatTime(timestamp) {
+    let date = new Date(timestamp);
+    return date.getHours() % 12 + ":" +
+          (date.getMinutes() < 10 ? '0' : '' ) + date.getMinutes() + " " +
+          (date.getHours() > 12 ? "PM" : "AM");
 }
 
 function editMessage(msg) {

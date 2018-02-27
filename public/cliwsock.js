@@ -30,13 +30,8 @@ $(document).ready(function onLoadCliWSock(){
                 ready.check();
             });
 
-            socket.emit("get history", "lobby", function(history) {
-                if(history) {
-                    for(let msg of history) {
-                        addMessage(msg);
-                    }
-                }
-                
+            socket.emit("get history", function(history) {
+                addChat(history);     
                 ready.get_history = true;
                 ready.check();
             });
@@ -49,9 +44,11 @@ $(document).ready(function onLoadCliWSock(){
             editMessage(msg);
         })
         .on('user join', function eUserJoin(user) {
+            console.log("User join", user);
             addOnlineUser(user);
         })
         .on('user leave', function eUserLeave(user) {
+            console.log("User leave", user);
             removeOnlineUser(user);
         })
         .on('user update', function eUserUpdate(user) {
@@ -67,7 +64,24 @@ $(document).ready(function onLoadCliWSock(){
             addNotice("System Alert:", "#FF0000", msg); 
         });
 
+    $("#NewRoom").click(function() {
+        socket.emit("join room", "newRoom", joinRoomResponse);
+    });
+    $("#Lobby").click(function() {
+        socket.emit("join room", "lobby", joinRoomResponse);
+    });
 
+    function joinRoomResponse(response) {
+        if(response) {
+            $("#chat>ul").empty();
+            socket.emit("get online", function(online) {
+                setOnlineUsers(online);
+            });
+            socket.emit("get history", function(history) {
+                addChat(history);
+            });
+        }
+    }
 
 
     $("#input_area")
@@ -93,6 +107,13 @@ $(document).ready(function onLoadCliWSock(){
 
 });
 
+function addChat(history) {
+    if(history) {
+        for(let msg of history) {
+            addMessage(msg);
+        }
+    }
+}
 
 function updateSelf(user) {
     $("#nickname").text(user.nickname).css('color', user.nickcolor);

@@ -19,7 +19,7 @@ app.use(cookieParser());
 app.disable('x-powered-by'); // Do not tell the browsers of server information
 
 // Use port 80
-app.set('port', process.env.PORT || 8080);
+app.set('port', process.env.PORT || 80);
 
 app.get('/', function(req, res) {
     if(req.cookies.userid && !userManager.getUser(req.cookies.userid)) {
@@ -52,6 +52,7 @@ app.use(function(err, req, res, next) {
 
 roomManager['lobby'] = roomManager.newMgr();
 
+
 io.on('connection', function(socket) {
     let userid = (socket.handshake['query'] ? socket.handshake['query']['userid'] : undefined);
     let userVals = userManager.getUser(userid);
@@ -60,8 +61,30 @@ io.on('connection', function(socket) {
         userVals = userManager.genUser();
     }
 
-    socket.on('join room', function(room) {
-        socket.join(room);
+    socket.on('join room', function(room, ackFunction) {
+        let roomKey = roomManager.exists(room);
+        if(!roomKey) {
+            roomKey = roomManager.makeRoom(room);
+            if(!roomKey) {
+                socket.emit("alert", "That room does not exist");
+                ackFunction && ackFunction(false);
+                return;
+            }
+        }
+
+        if(socket.clack_room) {
+            io.to(socket.clack_room).emit("user leave", getOutboundUser(userVals));
+            console.log(userVals.nickname + " is leaving " + socket.clack_room);
+            roomManager[socket.clack_room].leave(userVals);
+            socket.leave(socket.clack_room);
+        }
+        socket.clack_room = roomKey;
+        console.log(userVals.nickname + " is joining " + roomKey);
+        roomManager[roomKey].join(userVals);
+        socket.join(roomKey);
+        io.to(roomKey).emit("user join", getOutboundUser(userVals));
+        ackFunction && ackFunction(true);
+        socket.emit("alert", "Joined room " + roomKey);
     });
 
     socket.on('msg send', function(msg, ackFunction) {
@@ -75,8 +98,8 @@ io.on('connection', function(socket) {
         msg.nickcolor = userVals.nickcolor;
         msg.nickname = userVals.nickname;
         msg.userid = userVals.userid;
-        roomManager['lobby'].addMsg(msg);
-        socket.broadcast.to('lobby').emit('msg send', msg);
+        roomManager[socket.clack_room].addMsg(msg);
+        socket.broadcast.to(socket.clack_room).emit('msg send', msg);
         ackFunction(msg);
         /*setTimeout(function() {
             let nmsg = { msgid:msg.msgid, msg:"Edited message!" };
@@ -84,20 +107,27 @@ io.on('connection', function(socket) {
         }, 3000);/**/
     });
 
-    socket.on('get history', function(room, ackFunction) {
-        ackFunction(roomManager[room].getMessages());
+    socket.on('get history', function(ackFunction) {
+        if(socket.clack_room) {
+            ackFunction && ackFunction(roomManager[socket.clack_room].getMessages());
+        } else {
+            ackFunction && ackFunction(false);
+        }
     });
 
     socket.on('get self', function(ackFunction) {
-        ackFunction(getOutboundUser(userVals));
+        ackFunction && ackFunction(getOutboundUser(userVals));
     });
 
     socket.on('get online', function(ackFunction) {
-       ackFunction(getOnline());
+       ackFunction && ackFunction(roomManager[socket.clack_room].online());
     });
 
     socket.on('disconnect', function() {
         console.log(userVals.nickname + " has closed a socket.");
+        if(socket.clack_room) {
+            roomManager[socket.clack_room].leave(userVals);
+        }
         if(onlineUsers[userVals.userid] !== undefined) {
             if(onlineUsers[userVals.userid].connections <= 1) { 
                 onlineUsers[userVals.userid].timeout = setTimeout(function() {
@@ -113,7 +143,7 @@ io.on('connection', function(socket) {
 
     if(onlineUsers[userVals.userid] === undefined) {
         onlineUsers[userVals.userid] = userVals;
-        io.emit('user join', getOutboundUser(userVals));
+        //io.emit('user join', getOutboundUser(userVals));
         userVals.connections = 1;
     } else {
         if(onlineUsers[userVals.userid].timeout) {

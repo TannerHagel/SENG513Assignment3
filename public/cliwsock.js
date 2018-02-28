@@ -1,5 +1,7 @@
+var socket;
+
 $(document).ready(function onLoadCliWSock(){
-    var socket = io({query: "userid=" + chatUser.userid });
+    socket = io({query: "userid=" + chatUser.userid });
 
     socket
         .on('connect', function socketConnect() {
@@ -7,6 +9,7 @@ $(document).ready(function onLoadCliWSock(){
                 get_self: false,
                 get_online: false,
                 get_history: false,
+                get_rooms: false,
                 min_time: false,
                 check: function() {
                     for(let val in this) {
@@ -36,6 +39,12 @@ $(document).ready(function onLoadCliWSock(){
                 ready.check();
             });
 
+            socket.emit("get rooms", function(rooms) {
+                setRooms(rooms);
+                ready.get_rooms = true;
+                ready.check();
+            });
+
         })
         .on('msg send', function eMsgSend(msg) {
             addMessage(msg);
@@ -44,11 +53,9 @@ $(document).ready(function onLoadCliWSock(){
             editMessage(msg);
         })
         .on('user join', function eUserJoin(user) {
-            console.log("User join", user);
             addOnlineUser(user);
         })
         .on('user leave', function eUserLeave(user) {
-            console.log("User leave", user);
             removeOnlineUser(user);
         })
         .on('user update', function eUserUpdate(user) {
@@ -63,25 +70,6 @@ $(document).ready(function onLoadCliWSock(){
         .on('alert', function eAlert(msg) {
             addNotice("System Alert:", "#FF0000", msg); 
         });
-
-    $("#NewRoom").click(function() {
-        socket.emit("join room", "newRoom", joinRoomResponse);
-    });
-    $("#Lobby").click(function() {
-        socket.emit("join room", "lobby", joinRoomResponse);
-    });
-
-    function joinRoomResponse(response) {
-        if(response) {
-            $("#chat>ul").empty();
-            socket.emit("get online", function(online) {
-                setOnlineUsers(online);
-            });
-            socket.emit("get history", function(history) {
-                addChat(history);
-            });
-        }
-    }
 
 
     $("#input_area")
@@ -107,11 +95,36 @@ $(document).ready(function onLoadCliWSock(){
 
 });
 
+function joinRoomResponse(response) {
+    if(response) {
+        $("#chat>ul").empty();
+        socket.emit("get online", function(online) {
+            setOnlineUsers(online);
+        });
+        socket.emit("get history", function(history) {
+            addChat(history);
+        });
+    }
+}
+
+
 function addChat(history) {
     if(history) {
         for(let msg of history) {
             addMessage(msg);
         }
+    }
+}
+
+function setRooms(rooms) {
+    for(let room of rooms) {
+        console.log("Found room ", room);
+        $("#rooms").append($("<li>")
+                    .text(room)
+                    .click(function() {
+                        socket.emit("join room", room, joinRoomResponse);
+                    })
+                );
     }
 }
 

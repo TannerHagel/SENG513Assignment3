@@ -50,7 +50,11 @@ app.use(function(err, req, res, next) {
 
 });
 
-roomManager['lobby'] = roomManager.newMgr();
+roomManager.makeRoom("Lobby");
+roomManager.makeRoom("Lobby 2");
+roomManager.makeRoom("Third Room");
+roomManager.makeRoom("Fourth Room");
+roomManager.makeRoom("Fifth Room");
 
 
 io.on('connection', function(socket) {
@@ -74,12 +78,10 @@ io.on('connection', function(socket) {
 
         if(socket.clack_room) {
             io.to(socket.clack_room).emit("user leave", getOutboundUser(userVals));
-            console.log(userVals.nickname + " is leaving " + socket.clack_room);
             roomManager[socket.clack_room].leave(userVals);
             socket.leave(socket.clack_room);
         }
         socket.clack_room = roomKey;
-        console.log(userVals.nickname + " is joining " + roomKey);
         roomManager[roomKey].join(userVals);
         socket.join(roomKey);
         io.to(roomKey).emit("user join", getOutboundUser(userVals));
@@ -121,6 +123,10 @@ io.on('connection', function(socket) {
 
     socket.on('get online', function(ackFunction) {
        ackFunction && ackFunction(roomManager[socket.clack_room].online());
+    });
+
+    socket.on("get rooms", function(ackFunction) {
+        ackFunction && ackFunction(roomManager.rooms());
     });
 
     socket.on('disconnect', function() {

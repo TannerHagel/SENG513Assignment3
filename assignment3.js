@@ -50,7 +50,8 @@ app.use(function(err, req, res, next) {
 
 });
 
-roomManager.makeRoom("Lobby");
+let defaultRoom = "Lobby";
+roomManager.makeRoom(defaultRoom);
 roomManager.makeRoom("Lobby 2");
 roomManager.makeRoom("Third Room");
 roomManager.makeRoom("Fourth Room");
@@ -66,6 +67,10 @@ io.on('connection', function(socket) {
     }
 
     socket.on('join room', function(room, ackFunction) {
+        if(room === null) {
+            room = defaultRoom;
+        }
+
         let roomKey = roomManager.exists(room);
         if(!roomKey) {
             roomKey = roomManager.makeRoom(room);
@@ -81,11 +86,13 @@ io.on('connection', function(socket) {
             roomManager[socket.clack_room].leave(userVals);
             socket.leave(socket.clack_room);
         }
+
+	console.log(userVals.nickname + " is joining room " + roomKey);
         socket.clack_room = roomKey;
         roomManager[roomKey].join(userVals);
         socket.join(roomKey);
         io.to(roomKey).emit("user join", getOutboundUser(userVals));
-        ackFunction && ackFunction(true);
+        ackFunction && ackFunction(roomKey);
         socket.emit("alert", "Joined room " + roomKey);
     });
 

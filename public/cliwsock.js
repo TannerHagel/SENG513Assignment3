@@ -25,7 +25,13 @@ $(document).ready(function onLoadCliWSock(){
                 ready.check();
             });
 
-            socket.emit("join room", "lobby");
+            socket.emit("get rooms", function(rooms) {
+                setRooms(rooms);
+                ready.get_rooms = true;
+                ready.check();
+            });
+
+            socket.emit("join room", null, joinRoomResponse);
 
             socket.emit("get online", function(online) {
                 setOnlineUsers(online);
@@ -36,12 +42,6 @@ $(document).ready(function onLoadCliWSock(){
             socket.emit("get history", function(history) {
                 addChat(history);     
                 ready.get_history = true;
-                ready.check();
-            });
-
-            socket.emit("get rooms", function(rooms) {
-                setRooms(rooms);
-                ready.get_rooms = true;
                 ready.check();
             });
 
@@ -97,6 +97,13 @@ $(document).ready(function onLoadCliWSock(){
 
 function joinRoomResponse(response) {
     if(response) {
+        $("#rooms>li").each(function() {
+	    if($(this).text() == response) {
+                $(this).css('font-weight', 'bold');
+            } else {
+                $(this).css('font-weight', 'normal');
+            }
+	});
         $("#chat>ul").empty();
         socket.emit("get online", function(online) {
             setOnlineUsers(online);
@@ -117,8 +124,8 @@ function addChat(history) {
 }
 
 function setRooms(rooms) {
+    $("#rooms").empty();
     for(let room of rooms) {
-        console.log("Found room ", room);
         $("#rooms").append($("<li>")
                     .text(room)
                     .click(function() {
@@ -184,7 +191,7 @@ function formatTime(timestamp) {
 }
 
 function editMessage(msg) {
-    $("li[msgid='" + msg.msgid + "'] p:last").text(msg.msg);
+    $("#chat li[msgid='" + msg.msgid + "'] p:last").text(msg.msg);
 }
 
 function setOnlineUsers(users) {

@@ -1,7 +1,6 @@
 var chatUser;
 
 function toggleRight() {
-    console.log("Animating...");
     $("#right_content").animate({
         right: ($("#right_content").css("right").replace("px", "") === "0" ? "-100%" : "0")
     }, 1000, function() {
@@ -14,6 +13,13 @@ function toggleRight() {
     });
 }
 
+function toggleMenu() {
+    //$("#rooms").animate({
+    //    display: ($("#rooms").css("display") === "none" ? "block" : "none")
+    //}, 500);
+    $("#rooms").toggle();
+}
+
 $(document).ready(function onLoadCliScript() {
 
     let userID = getCookie('userid');
@@ -21,9 +27,13 @@ $(document).ready(function onLoadCliScript() {
         userid: userID,
         };
 
-    $("#left_content img").click(function() {
-            toggleRight();
-        });
+    $("#mobile_online_icon").click(function() {
+        toggleRight();
+    });
+
+    $("#mobile_menu_icon").click(function() {
+        toggleMenu();
+    });
 });
 
 

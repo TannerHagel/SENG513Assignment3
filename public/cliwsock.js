@@ -1,7 +1,7 @@
 var socket;
 
 $(document).ready(function onLoadCliWSock(){
-    socket = io({query: "userid=" + chatUser.userid });
+    socket = io({query: "userid=" + (chatUser ? chatUser.userid : '') });
 
     socket
         .on('connect', function socketConnect() {

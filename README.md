@@ -3,7 +3,7 @@
 ### How to run
 Use the following command to run the server, replacing '8080' with the port number you wish to start the server on:
 ```
-PORT=8080 nodejs assignment3.js
+PORT=8080 node assignment3.js
 ```
 
 ### Functionality

@@ -24,7 +24,7 @@ function user_manager() {
     };
 
     ret.changeName = function userMgrChangeName(user, newNick) {
-	if(newNick.length < 1) {
+	if(newNick.length < 1 || newNick.length > 20) {
 	    return false;
 	}
         let change = true;
